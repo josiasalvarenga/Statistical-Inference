@@ -1,0 +1,69 @@
+---
+title: "Statistical Inference Course Project, Part 1"
+author: "Josias Alvarenga"
+date: "April 9, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+## Overview
+
+Part 1: Simulation Exercise Instructions
+
+In this project you will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. You will investigate the distribution of averages of 40 exponentials. Note that you will need to do a thousand simulations.
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials. You should
+
+1. Show the sample mean and compare it to the theoretical mean of the distribution.
+2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+3. Show that the distribution is approximately normal.
+
+## Simulations
+
+```{r settings}
+lambda = 0.2
+n = 40
+sims = 1:1000
+set.seed(100)
+means <- data.frame(x = sapply(sims, function(x) {mean(rexp(n, lambda))}))
+```
+
+```{r mean}
+mean(means$x)
+```
+
+```{r expected_mean}
+1/lambda
+```
+
+Center of distribution = 4.9997 is very close to the expected mean = 5.0000
+
+```{r sd}
+sd(means$x)
+```
+
+```{r expected_sd}
+(1/lambda)/sqrt(n)
+```
+
+Standard deviation = 0.8020 is very close to the expected standard deviation = 0.7906
+
+```{r var}
+var(means$x)
+```
+
+```{r expected_var}
+((1/lambda)/sqrt(n))^2
+```
+
+Variance of distribution = 0.6432 is very close to the expected variance of distribution = 0.625
+
+Based on the graphic below we can verify that the distribution of our simulations seems to be approximately normal.
+
+
+
+```{r plot}
+library(ggplot2)
+ggplot(data = means, aes(x = x)) + geom_histogram(aes(y=..density..),
+        fill = 'lightgreen', color = 'black', binwidth = 0.20)
+```
