@@ -1,0 +1,63 @@
+---
+title: "Statistical Inference Course Project, Part 2"
+author: "Josias Alvarenga"
+date: "April 9, 2017"
+output:
+  pdf_document: default
+  html_document: default
+---
+## Overview
+
+Part 2: Basic Inferential Data Analysis Instructions
+
+Now in the second portion of the project, we're going to analyze the ToothGrowth data in the R datasets package.
+
+1. Load the ToothGrowth data and perform some basic exploratory data analyses
+2. Provide a basic summary of the data.
+3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+4.State your conclusions and the assumptions needed for your conclusions.
+
+
+## Question 1
+
+```{r question1}
+data(ToothGrowth)
+head(ToothGrowth)
+str(ToothGrowth)
+plot(ToothGrowth)
+```
+
+Based on the data set analysis we can verify that the variable dose is numeric and assumes the values 0.5, 1.0 and 2.0 mg. So, I will transform it to a factor variable.
+
+```{r transf_factor}
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+summary(ToothGrowth$dose)
+```
+
+## Question 2
+
+```{r question2}
+summary(ToothGrowth)
+library(ggplot2)
+plot <- ggplot(ToothGrowth, aes(x=factor(dose), y=len, fill=factor(dose)))
+plot + geom_boxplot(notch=FALSE) + facet_grid(.~supp) +
+        scale_x_discrete("Dosage (milligram)") +
+        scale_y_continuous("Length of teeth") +
+        ggtitle("Summary")
+```
+
+## Question 3
+
+```{r question3}
+supp.equal <- t.test(len~supp, paired=F, var.equal=T, data=ToothGrowth)
+supp.unequal <- t.test(len~supp, paired=F, var.equal=F, data=ToothGrowth)
+supp.result <- data.frame("P-Value"=c(supp.equal$p.value, supp.unequal$p.value),
+        "Conf Low"=c(supp.equal$conf[1],supp.unequal$conf[1]),
+        "Conf High"=c(supp.equal$conf[2],supp.unequal$conf[2]),
+        row.names=c("Equal Var","Unequal Var"))
+supp.result
+```
+
+## Question 4
+
+As doses are larger, the impact on tooth growth are also larger.
